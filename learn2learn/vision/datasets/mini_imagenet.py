@@ -85,31 +85,18 @@ class MiniImagenet(data.Dataset):
         self.mode = mode
         self._bookkeeping_path = os.path.join(self.root, 'mini-imagenet-bookkeeping-' + mode + '.pkl')
         if self.mode == 'test':
-            google_drive_file_id = '1wpmY-hmiJUUlRBkO9ZDCXAcIpHEFdOhD'
-            dropbox_file_link = 'https://www.dropbox.com/s/ye9jeb5tyz0x01b/mini-imagenet-cache-test.pkl?dl=1'
+          pickle_file = '/content/learn2learn/learn2learn/data/mini-imagenet-cache-test.pkl'
         elif self.mode == 'train':
-            google_drive_file_id = '1I3itTXpXxGV68olxM5roceUMG8itH9Xj'
-            dropbox_file_link = 'https://www.dropbox.com/s/9g8c6w345s2ek03/mini-imagenet-cache-train.pkl?dl=1'
+          pickle_file = '/content/learn2learn/learn2learn/data/mini-imagenet-cache-train.pkl'
         elif self.mode == 'validation':
-            google_drive_file_id = '1KY5e491bkLFqJDp0-UWou3463Mo8AOco'
-            dropbox_file_link = 'https://www.dropbox.com/s/ip1b7se3gij3r1b/mini-imagenet-cache-validation.pkl?dl=1'
+          pickle_file = '/content/learn2learn/learn2learn/data/mini-imagenet-cache-validation.pkl'
         else:
             raise ValueError('Needs to be train, test or validation')
 
-        pickle_file = os.path.join(self.root, 'mini-imagenet-cache-' + mode + '.pkl')
-        try:
-            if not self._check_exists() and download:
-                print('Download failed. Re-trying mini-ImageNet --', mode)
-                download_file(dropbox_file_link, pickle_file)
-            with open(pickle_file, 'rb') as f:
-                self.data = pickle.load(f)
+        # pickle_file = os.path.join(self.root, 'mini-imagenet-cache-' + mode + '.pkl')
 
-        except pickle.UnpicklingError:        
-            if not self._check_exists() and download:
-                print('Downloading mini-ImageNet --', mode)
-                download_pkl(google_drive_file_id, self.root, mode)
-            with open(pickle_file, 'rb') as f:
-                self.data = pickle.load(f)
+        with open(pickle_file, 'rb') as f:
+            self.data = pickle.load(f)
 
         self.x = torch.from_numpy(self.data["image_data"]).permute(0, 3, 1, 2).float()
         self.y = np.ones(len(self.x))
