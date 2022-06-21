@@ -4,7 +4,9 @@ import random
 import copy
 import numpy as np
 import torch
-import learn2learn as l2l
+#import learn2learn as l2l
+from learn2learn.vision.benchmarks import get_tasksets
+from learn2learn.vision.models import MiniImagenetCNN
 
 
 def accuracy(predictions, targets):
@@ -73,7 +75,7 @@ def main(
         torch.cuda.manual_seed(seed)
         device = torch.device('cuda')
 
-    train_tasks, valid_tasks, test_tasks = l2l.vision.benchmarks.get_tasksets(
+    train_tasks, valid_tasks, test_tasks = get_tasksets(
         'mini-imagenet',
         train_samples=2*train_shots,
         train_ways=ways,
@@ -83,7 +85,7 @@ def main(
     )
 
     # Create model
-    model = l2l.vision.models.MiniImagenetCNN(ways)
+    model = MiniImagenetCNN(ways)
     model.to(device)
     opt = torch.optim.SGD(model.parameters(), meta_lr)
     adapt_opt = torch.optim.Adam(model.parameters(), lr=fast_lr, betas=(0, 0.999))
